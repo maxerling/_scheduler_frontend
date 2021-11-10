@@ -1,0 +1,73 @@
+.selected {
+  background-color: #fcf8e3;
+}
+
+.cal-head th {
+  border: 2px transparent;
+  border-bottom: 1px solid #dbdbdb;
+  background-color: lightsalmon;
+}
+
+.td-time {
+  height: 50px;
+  font-weight: 700;
+  text-align: center;
+  border-bottom: 1px solid #dbdbdb;
+  transition: 0.1s ease-in-out;
+}
+
+.td-time:hover {
+  background-color: #cae6ef;
+  cursor: pointer;
+}
+
+.table td,
+.table th {
+  padding: 0;
+}
+
+table {
+  table-layout: fixed;
+  width: 100%;
+}
+td {
+  width: 25%;
+}
+
+.event {
+  font-size: 12px;
+  color: white;
+  font-weight: 500;
+  padding: 5px;
+  margin: 1px;
+  border-bottom: 1px solid white;
+  border-radius: 6px;
+  transition: 0.2s ease-in-out;
+  position: absolute;
+  width: 12%;
+  background-color: maroon;
+}
+
+.event:hover {
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.event .modal-backgorund {
+  background-color: white;
+}
+
+.error-message {
+  display: none;
+  flex-direction: row;
+  color: #fa3d3e;
+  background-color: #ffe0e0;
+  width: 13em;
+  height: 2.7em;
+  font-weight: 800;
+  align-items: center;
+  justify-content: center;
+  padding: 1.3em;
+  font-size: 0.8rem;
+  margin: 1em 0 0 0;
+}

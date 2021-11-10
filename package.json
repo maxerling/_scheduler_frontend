@@ -1,0 +1,24 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "parcel src/*.html",
+    "build": "parcel build src/*.html",
+    "serve": "serve -s dist/"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jsonwebtoken": "^8.5.5",
+    "parcel-bundler": "^1.12.5",
+    "serve": "^13.0.2",
+    "typescript": "^4.4.4"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^8.5.1"
+  }
+}
