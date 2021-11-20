@@ -35,7 +35,7 @@ function addEventSubmit() {
     "error-message"
   ) as HTMLCollectionOf<HTMLElement>;
 
-  submitBtn?.addEventListener("click", (e) => {
+  submitBtn?.addEventListener("click", async (e) => {
     e.preventDefault();
     console.log(addEventForm);
     if (isEmpty(addEventForm, erroerMessages)) return false;
@@ -44,16 +44,19 @@ function addEventSubmit() {
       return false;
     }
 
+
+    console.log("submit");
+
+    const user = await getUserFromJWT();
+    if (user == "") return;
+
     const body = {
       name: `${nameInput.value}`,
       date: `${dateInput.value}`,
       start_time: `${startTimeInput.value}`,
       end_time: `${endTimeInput.value}`,
       description: `${descInput.value}`,
-      user: {
-        id: loggedUser.id,
-        username: loggedUser.username,
-      },
+      user: user,
     };
 
     fetch("http://localhost:8080/event/add", {
@@ -67,7 +70,29 @@ function addEventSubmit() {
       },
       body: JSON.stringify(body),
     });
+    window.location.replace("http://localhost:1234/scheduler.html");
   });
+}
+
+
+
+async function getUserFromJWT() {
+  const token = localStorage.getItem("jwt") ?? "";
+  if (token == "") return "";
+  const parsedToken = JSON.parse(token);
+  const decodedToken: JWTData = jwt.decode(parsedToken) as JWTData;
+  const username = decodedToken.sub;
+  const response = await fetch(`http://localhost:8080/user/${username}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${JSON.parse(localStorage.getItem("jwt") ?? "")}`,
+      "Access-Control-Allow-Origin": "*",
+    },
+  });
+  const user = (await response.json()) as User;
+
+  return user;
 }
 
 function isStartTimeGreaterThanEndTime(
@@ -93,9 +118,9 @@ function isStartTimeGreaterThanEndTime(
     0
   );
   console.log(errorMessages);
-  if (startTimeDate < endTimeDate) {
+  if (startTimeDate > endTimeDate) {
     errorMessages[3].style.display = "flex";
-    errorMessages[3].textContent = "Can't be greater than start time!";
+    errorMessages[3].textContent = "Can't be lesser than start time!";
     return false;
   }
 
@@ -188,9 +213,11 @@ async function createEventElements(): Promise<void> {
     let splittedEventDate: string[] = event.date.split("-");
     let splittedMonthAndYear: string[] =
       monthAndYearEle?.textContent?.split(" ") ?? [];
-    let eventDateWeekend = `${splittedEventDate[2]}/${splittedEventDate[1][1]}`;
+    let eventDateWeekend = `${splittedEventDate[2]}/${splittedEventDate[1]}`;
+
     if (
-      getMonth(Number(splittedEventDate[1][1])) === splittedMonthAndYear[0] &&
+      getMonthFromNumberToString(Number(splittedEventDate[1])) ===
+        splittedMonthAndYear[0] &&
       splittedEventDate[0] === splittedMonthAndYear[1]
     ) {
       for (let i = 0; i < 7; i++) {
@@ -221,7 +248,7 @@ async function createEventElements(): Promise<void> {
           eventEle.append(timeEle);
 
           eventCollectionEle?.append(eventEle);
-
+          console.log("d");
           onClickEvent(event, eventEle);
         }
       }
@@ -301,7 +328,7 @@ function moveWeek(weekAmount: number): void {
   const month: number = Number(weekdayAndMonthArray[1].substring(3));
 
   const randDate: Date = new Date(
-    `${getMonth(month)} ${weekday}, ${monthAndYearArray[1]}`
+    `${getMonthFromNumberToString(month)} ${weekday}, ${monthAndYearArray[1]}`
   );
   let randDatePlusOne: Date = new Date(randDate);
   randDatePlusOne.setDate(randDatePlusOne.getDate() + weekAmount);
@@ -331,8 +358,8 @@ function moveWeek(weekAmount: number): void {
 
   //extra: change so the default date is based on current day (ex: day-1 is the closest mon)
 }
-
-function getMonth(month: number): string {
+//TODO: months that start with 0 still work?
+function getMonthFromNumberToString(month: number): string {
   if (month === 1) {
     return "January";
   } else if (month === 2) {
@@ -356,6 +383,36 @@ function getMonth(month: number): string {
   } else if (month === 11) {
     return "November";
   } else if (month === 12) {
+    return "December";
+  }
+
+  return "";
+}
+//TODO: maybe delete
+function getMonthFromStringToStringName(month: string): string {
+  if (month === "01") {
+    return "January";
+  } else if (month === "02") {
+    return "February";
+  } else if (month === "03") {
+    return "March";
+  } else if (month === "04") {
+    return "April";
+  } else if (month === "05") {
+    return "May";
+  } else if (month === "06") {
+    return "June";
+  } else if (month === "07") {
+    return "July";
+  } else if (month === "08") {
+    return "August";
+  } else if (month === "09") {
+    return "September";
+  } else if (month === "10") {
+    return "October";
+  } else if (month === "11") {
+    return "November";
+  } else if (month === "01") {
     return "December";
   }
 
@@ -442,13 +499,4 @@ function checkDay(currentDay: string): number {
 
   return -1;
 }
-// function authorization() {
-//   const user = localStorage.getItem("user");
-//   const jwt = localStorage.getItem("jwt");
-
-//   if (user == null && jwt == null) {
-//     window.location.replace("http://localhost:3000/login.html");
-//   }
-// }
-
 export = {};
