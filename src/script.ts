@@ -1,9 +1,11 @@
 import * as jwt from "jsonwebtoken";
+import moment from "moment";
 import { authorization } from "./authorization";
 import { logOutButton } from "./authentication";
 /* GLOBAL */
 var loggedUser: User;
-
+const STAR_TIME_LIMIT = "04:00";
+const END_TIME_LIMIT = "23:59";
 /* ---- */
 setup();
 
@@ -31,21 +33,42 @@ function addEventSubmit() {
   const descInput: HTMLInputElement = addEventForm?.children[4].children[1]
     .children[0] as HTMLInputElement;
   const submitBtn = addEventForm?.children[5];
-  const erroerMessages = document.getElementsByClassName(
+  const errorMessages = document.getElementsByClassName(
     "error-message"
   ) as HTMLCollectionOf<HTMLElement>;
 
+  const startTimeField = addEventForm?.children[2].children[1]
+    .children[0] as HTMLInputElement;
+  const endTimeField = addEventForm?.children[3].children[1]
+    .children[0] as HTMLInputElement;
+
   submitBtn?.addEventListener("click", async (e) => {
     e.preventDefault();
-    console.log(addEventForm);
-    if (isEmpty(addEventForm, erroerMessages)) return false;
-    //TODO: date format, time format,
-    if (isStartTimeGreaterThanEndTime(addEventForm, erroerMessages)) {
-      return false;
+
+    if (isEmpty(addEventForm, errorMessages)) return;
+    if (
+      timeWithinTimeLimit(
+        startTimeInput,
+        STAR_TIME_LIMIT,
+        END_TIME_LIMIT,
+        errorMessages[2]
+      )
+    ) {
+      return;
     }
-
-
-    console.log("submit");
+    if (
+      timeWithinTimeLimit(
+        endTimeInput,
+        STAR_TIME_LIMIT,
+        END_TIME_LIMIT,
+        errorMessages[3]
+      )
+    ) {
+      return;
+    }
+    if (isStartTimeGreaterThanEndTime(addEventForm, errorMessages)) {
+      return;
+    }
 
     const user = await getUserFromJWT();
     if (user == "") return;
@@ -53,13 +76,13 @@ function addEventSubmit() {
     const body = {
       name: `${nameInput.value}`,
       date: `${dateInput.value}`,
-      start_time: `${startTimeInput.value}`,
-      end_time: `${endTimeInput.value}`,
+      startTime: `${startTimeInput.value}`,
+      endTime: `${endTimeInput.value}`,
       description: `${descInput.value}`,
       user: user,
     };
 
-    fetch("http://localhost:8080/event/add", {
+    const response = await fetch("http://localhost:8080/event/add", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -70,11 +93,71 @@ function addEventSubmit() {
       },
       body: JSON.stringify(body),
     });
-    window.location.replace("http://localhost:1234/scheduler.html");
+    if (response.status === 200) {
+      deactiveAllErrorMessages(errorMessages);
+      window.location.replace("http://localhost:1234/scheduler.html");
+    } else {
+      const data: ErrorResponse = await response.json();
+      console.log("!", data.description);
+      activeErrorMessage(errorMessages[3], data.message);
+      activeErrorMessage(errorMessages[2], data.message);
+    }
   });
 }
 
+function timeWithinTimeLimit(
+  timeInput: HTMLInputElement,
+  startTimeLimit: string,
+  endTimeLimit: string,
+  errorMessageElement: HTMLElement
+) {
+  const startTimeLimitSeconds = formatTimeIntoSeconds(startTimeLimit);
+  const endTimeLimitSeconds = formatTimeIntoSeconds(endTimeLimit);
+  const startTimeDate = new Date(1970, 1, 1, 0);
+  startTimeDate.setSeconds(startTimeLimitSeconds);
+  const endTimeDate = new Date(1970, 1, 1, 0);
+  endTimeDate.setSeconds(endTimeLimitSeconds);
 
+  const timeInputSeconds = formatTimeIntoSeconds(timeInput.value);
+  const timeInputDate = new Date(1970, 1, 1, 0);
+  timeInputDate.setSeconds(timeInputSeconds);
+  const isBetweenLimit =
+    startTimeDate.getTime() <= timeInputDate.getTime() &&
+    timeInputDate.getTime() <= endTimeDate.getTime();
+  if (!isBetweenLimit) {
+    errorMessageElement.textContent = `Needs to be within ${startTimeLimit}-${endTimeLimit}`;
+    errorMessageElement.style.display = "flex";
+    return true;
+  }
+  errorMessageElement.style.display = "none";
+  return false;
+}
+
+function convertTimeIntoDate(seconds: number) {
+  return new Date(1970, 1, 1, 0).setSeconds(seconds);
+}
+
+function formatTimeIntoSeconds(digitalClock: string) {
+  const [hours, minutes] = digitalClock.split(":");
+  const timeInSeconds = Number(hours) * 60 * 60 + Number(minutes) * 60;
+  return timeInSeconds;
+}
+
+function activeErrorMessage(
+  errorMessageElement: HTMLElement,
+  errorMessageText: string
+) {
+  errorMessageElement.style.display = "flex";
+  errorMessageElement.textContent = errorMessageText;
+}
+
+function deactiveAllErrorMessages(
+  errorMessageElements: HTMLCollectionOf<HTMLElement>
+) {
+  for (let i = 0; i < errorMessageElements.length; i++) {
+    errorMessageElements[i].style.display = "none";
+  }
+}
 
 async function getUserFromJWT() {
   const token = localStorage.getItem("jwt") ?? "";
@@ -103,7 +186,6 @@ function isStartTimeGreaterThanEndTime(
     .children[0] as HTMLInputElement;
   const endTimeField = addEventForm?.children[3].children[1]
     .children[0] as HTMLInputElement;
-  console.log(endTimeField);
   const splittedStartTimeValue = startTimeField.value.split(":");
   const splittedEndTimeValue = endTimeField.value.split(":");
 
@@ -117,20 +199,19 @@ function isStartTimeGreaterThanEndTime(
     Number(splittedEndTimeValue[1]),
     0
   );
-  console.log(errorMessages);
   if (startTimeDate > endTimeDate) {
     errorMessages[3].style.display = "flex";
     errorMessages[3].textContent = "Can't be lesser than start time!";
-    return false;
+    return true;
   }
 
   if (startTimeDate == endTimeDate) {
     errorMessages[3].style.display = "flex";
     errorMessages[3].textContent = "Can't be equal to start time!";
-    return false;
+    return true;
   }
 
-  return false; // true
+  return false;
 }
 
 function isEmpty(
@@ -207,7 +288,7 @@ function onClickTimeAddEvent() {
 }
 
 async function createEventElements(): Promise<void> {
-  loggedUser.bookedAppointments.map((event: BookingAppointment): void => {
+  loggedUser.bookedAppointments.map((event: Event): void => {
     const weekdayParentEle = document.getElementById("weekdays-name");
     const monthAndYearEle = document.getElementById("cal-month");
     let splittedEventDate: string[] = event.date.split("-");
@@ -234,21 +315,20 @@ async function createEventElements(): Promise<void> {
           eventEle.style.height = "50.198px";
           const name = event.name;
           //const description = event.description;
-          const start_time = event.start_time;
-          const end_time = event.end_time;
+          const startTime = event.startTime;
+          const endTime = event.endTime;
           const nameEle = document.createElement("p");
           const timeEle = document.createElement("h6");
-          timeEle.textContent = `${start_time}-${end_time}`;
+          timeEle.textContent = `${startTime}-${endTime}`;
           nameEle.textContent = `${name}`;
-          const timePositionAttArray = timePosition(start_time, end_time);
-          eventEle.style.top = `${timePositionAttArray[0]}px`;
-          eventEle.style.height = `${timePositionAttArray[1]}px`;
+          const [topValue, heightValue] = timePosition(startTime, endTime);
+          eventEle.style.top = `${topValue}px`;
+          eventEle.style.height = `${heightValue}px`;
 
           eventEle.append(nameEle);
           eventEle.append(timeEle);
 
           eventCollectionEle?.append(eventEle);
-          console.log("d");
           onClickEvent(event, eventEle);
         }
       }
@@ -256,7 +336,7 @@ async function createEventElements(): Promise<void> {
   });
 }
 
-function onClickEvent(event: BookingAppointment, eventEle: HTMLDivElement) {
+function onClickEvent(event: Event, eventEle: HTMLDivElement) {
   const modalEle = document.getElementsByClassName("modal")[0];
   const modalCardHeadEle =
     document.getElementsByClassName("modal-card")[0].children[0];
@@ -265,7 +345,7 @@ function onClickEvent(event: BookingAppointment, eventEle: HTMLDivElement) {
 
   eventEle.addEventListener("click", () => {
     modalCardHeadEle.children[0].textContent = event.name;
-    modalCardBodyEle.children[0].firstChild!.textContent = `${event.start_time}-${event.end_time}`;
+    modalCardBodyEle.children[0].firstChild!.textContent = `${event.startTime}-${event.endTime}`;
     modalCardBodyEle.children[0].lastChild!.textContent = `${event.date}`;
     modalCardBodyEle.children[1].textContent = `${event.description}`;
 
@@ -281,26 +361,17 @@ function welcomeMessage(loggedUser: User): void {
   welcomeMessage!.textContent = `Welcome ${loggedUser.firstName}` ?? "";
 }
 
-function timePosition(startTime: string, endTime: string): string[] {
-  let startAndEndAttr: string[] = [];
-  let startTimeValue = startTime.substr(0, 2);
-  let endTimeValue = endTime.substr(0, 2);
-
-  if (startTimeValue == "00") {
-    startTimeValue = "24";
-  } else if (endTimeValue == "00") {
-    endTimeValue = "24";
-  }
-  startAndEndAttr.push(
-    (151 + (Number(startTimeValue.replace("0", "")) - 4) * 50).toString()
-  );
-  startAndEndAttr.push(
-    (
-      (Number(endTimeValue.substr(0, 2).replace("0", "")) -
-        Number(startTime.substr(0, 2).replace("0", ""))) *
-      51
-    ).toString()
-  );
+function timePosition(startTime: string, endTime: string): number[] {
+  const [endTimeHours, endTimeMinutes] = endTime.split(":");
+  const [startTimeHours, startTimeMinutes] = startTime.split(":");
+  let startAndEndAttr: number[] = [];
+  const topValue = 151 + (Number(startTimeHours) - 4) * 50;
+  startAndEndAttr.push(topValue);
+  const diffHoursIntoMinutes =
+    (Number(endTimeHours) - Number(startTimeHours)) * 60;
+  const eventValue =
+    (diffHoursIntoMinutes * 50) / 60 + (Number(endTimeMinutes) * 52) / 60;
+  startAndEndAttr.push(eventValue);
   return startAndEndAttr;
 }
 

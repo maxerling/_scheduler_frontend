@@ -1,7 +1,9 @@
 import * as jwt from "jsonwebtoken";
 export function authorization() {
   const token = localStorage.getItem("jwt") ?? "";
-  if (token == "") return;
+  if (token == "") {
+    redirectToLogin();
+  }
   const parsedToken = JSON.parse(token);
   const decodedToken: JWTData = jwt.decode(parsedToken) as JWTData;
   const expDate = decodedToken.exp;
@@ -10,11 +12,15 @@ export function authorization() {
   const currentDate = new Date();
   const hasPassedJWTExpDate = currentDate > jwtExpDate;
 
-  if (jwt == null || jwt == undefined || hasPassedJWTExpDate) {
-    localStorage.clear();
-    alert("try to login again");
-    window.location.replace("http://localhost:1234/login.html");
+  if (hasPassedJWTExpDate) {
+    redirectToLogin();
   }
+}
+
+function redirectToLogin() {
+  localStorage.clear();
+  alert("try to login again");
+  window.location.replace("http://localhost:1234/login.html");
 }
 
 export function loggedInUser() {

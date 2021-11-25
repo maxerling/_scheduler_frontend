@@ -6,6 +6,6 @@ interface User {
   lastName: string;
   role: string;
   isActive: boolean;
-  bookedAppointments: BookingAppointment[];
+  bookedAppointments: Event[];
   date: string;
 }
