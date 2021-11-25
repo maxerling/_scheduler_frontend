@@ -98,7 +98,6 @@ function addEventSubmit() {
       window.location.replace("http://localhost:1234/scheduler.html");
     } else {
       const data: ErrorResponse = await response.json();
-      console.log("!", data.description);
       activeErrorMessage(errorMessages[3], data.message);
       activeErrorMessage(errorMessages[2], data.message);
     }
@@ -392,11 +391,11 @@ function moveWeek(weekAmount: number): void {
   const monthAndYearEle = document.getElementById("cal-month");
   const monthAndYearArray: string[] =
     monthAndYearEle?.textContent?.split(" ") ?? [];
-  const weekdayAndMonthArray: string[] =
+  const [dayString, date]: string[] =
     weekdayParentEle?.children[1]?.textContent?.split(" ") ?? [];
 
-  const weekday: number = Number(weekdayAndMonthArray[1].substring(0, 2));
-  const month: number = Number(weekdayAndMonthArray[1].substring(3));
+  const weekday: number = Number(date.substring(0, 2));
+  const month: number = Number(date.substring(3));
 
   const randDate: Date = new Date(
     `${getMonthFromNumberToString(month)} ${weekday}, ${monthAndYearArray[1]}`
@@ -409,9 +408,13 @@ function moveWeek(weekAmount: number): void {
   randDateFArray[1] = randDatePlusOne.toLocaleString("en-US", {
     month: "long",
   });
+  const isSingleDigitMonthPlusOne =
+    randDatePlusOne.getMonth() + 1 < 10
+      ? `0${randDatePlusOne.getMonth() + 1}`
+      : `${randDatePlusOne.getMonth() + 1}`;
   weekdayParentEle!.children[1].textContent = `${randDateFArray[0].toUpperCase()} ${
     randDateFArray[2]
-  }/${randDatePlusOne.getMonth() + 1}`;
+  }/${isSingleDigitMonthPlusOne}`;
 
   monthAndYearEle!.textContent! = `${randDateFArray[1]} ${randDateFArray[3]}`;
 
@@ -422,14 +425,13 @@ function moveWeek(weekAmount: number): void {
       i + 1
     ].textContent = `${dateOWFPlusOneArray[0].toUpperCase()} ${
       dateOWFPlusOneArray[2]
-    }/${randDatePlusOne.getMonth() + 1}`;
+    }/${isSingleDigitMonthPlusOne}`;
   }
 
   createEventElements();
 
   //extra: change so the default date is based on current day (ex: day-1 is the closest mon)
 }
-//TODO: months that start with 0 still work?
 function getMonthFromNumberToString(month: number): string {
   if (month === 1) {
     return "January";
@@ -454,36 +456,6 @@ function getMonthFromNumberToString(month: number): string {
   } else if (month === 11) {
     return "November";
   } else if (month === 12) {
-    return "December";
-  }
-
-  return "";
-}
-//TODO: maybe delete
-function getMonthFromStringToStringName(month: string): string {
-  if (month === "01") {
-    return "January";
-  } else if (month === "02") {
-    return "February";
-  } else if (month === "03") {
-    return "March";
-  } else if (month === "04") {
-    return "April";
-  } else if (month === "05") {
-    return "May";
-  } else if (month === "06") {
-    return "June";
-  } else if (month === "07") {
-    return "July";
-  } else if (month === "08") {
-    return "August";
-  } else if (month === "09") {
-    return "September";
-  } else if (month === "10") {
-    return "October";
-  } else if (month === "11") {
-    return "November";
-  } else if (month === "01") {
     return "December";
   }
 
