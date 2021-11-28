@@ -95,7 +95,7 @@ function addEventSubmit() {
     });
     if (response.status === 200) {
       deactiveAllErrorMessages(errorMessages);
-      window.location.replace("http://localhost:1234/scheduler.html");
+      window.location.replace("https://maxerling.github.io/scheduler_frontend/scheduler.html");
     } else {
       const data: ErrorResponse = await response.json();
       activeErrorMessage(errorMessages[3], data.message);
@@ -261,7 +261,7 @@ async function getData() {
     .then((data) => (loggedUser = data))
     .catch((err) => {
       localStorage.clear();
-      window.location.replace("http://localhost:1234/login.html");
+      window.location.replace("https://maxerling.github.io/scheduler_frontend/login.html");
       alert("someting went wrong, try agin!");
       console.log(err);
     });

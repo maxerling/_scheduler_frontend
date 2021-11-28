@@ -5,7 +5,7 @@ function redirectLoggedUser() {
   const user = localStorage.getItem("user");
   const jwt = localStorage.getItem("jwt");
   if (user != null && jwt != null) {
-    window.location.replace("http://localhost:1234/scheduler.html");
+    window.location.replace("https://maxerling.github.io/scheduler_frontend/scheduler.html");
   }
 }
 async function formLoginSubmit() {
@@ -36,7 +36,7 @@ async function formLoginSubmit() {
             if (data.jwt != null) {
               localStorage.setItem("jwt", JSON.stringify(data.jwt));
               localStorage.setItem("user", JSON.stringify(usernameField.value));
-              window.location.replace("http://localhost:1234/scheduler.html");
+              window.location.replace("https://maxerling.github.io/scheduler_frontend/scheduler.html");
             }
           })
           .catch((error) => {
