@@ -20,7 +20,7 @@ async function formLoginSubmit() {
         const passwordField = document.getElementById(
           "password"
         ) as HTMLInputElement;
-        fetch("http://localhost:8080/auth", {
+        fetch("https://scheduler-21.herokuapp.com/auth", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

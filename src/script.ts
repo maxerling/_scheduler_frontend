@@ -82,7 +82,7 @@ function addEventSubmit() {
       user: user,
     };
 
-    const response = await fetch("http://localhost:8080/event/add", {
+    const response = await fetch("https://scheduler-21.herokuapp.com/event/add", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -164,7 +164,7 @@ async function getUserFromJWT() {
   const parsedToken = JSON.parse(token);
   const decodedToken: JWTData = jwt.decode(parsedToken) as JWTData;
   const username = decodedToken.sub;
-  const response = await fetch(`http://localhost:8080/user/${username}`, {
+  const response = await fetch(`https://scheduler-21.herokuapp.com/user/${username}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -249,7 +249,7 @@ async function getData() {
   const username = localStorage.getItem("user") ?? "";
   if (username == "") return;
   const parsedUsername = JSON.parse(username);
-  await fetch(`http://localhost:8080/user/${parsedUsername}`, {
+  await fetch(`https://scheduler-21.herokuapp.com/user/${parsedUsername}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

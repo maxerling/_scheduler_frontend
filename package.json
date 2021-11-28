@@ -7,13 +7,15 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "parcel src/*.html",
     "build": "parcel build src/*.html",
-    "serve": "serve -s dist/"
+    "serve": "serve -s dist/",
+    "deploy": "gh-pages -d dist"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/jsonwebtoken": "^8.5.5",
+    "gh-pages": "^3.2.3",
     "parcel-bundler": "^1.12.5",
     "serve": "^13.0.2",
     "typescript": "^4.4.4"
