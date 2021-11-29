@@ -20,7 +20,7 @@ export function authorization() {
 function redirectToLogin() {
   localStorage.clear();
   alert("try to login again");
-  window.location.replace("https://maxerling.github.io/scheduler_frontend/login.html");
+  window.location.replace("https://maxerling.github.io/_scheduler_frontend/");
 }
 
 export function loggedInUser() {
@@ -35,6 +35,8 @@ export function loggedInUser() {
   const hasPassedJWTExpDate = currentDate > jwtExpDate;
 
   if (!hasPassedJWTExpDate) {
-    window.location.replace("https://maxerling.github.io/scheduler_frontend/scheduler.html");
+    window.location.replace(
+      "https://maxerling.github.io/_scheduler_frontend/scheduler.html"
+    );
   }
 }

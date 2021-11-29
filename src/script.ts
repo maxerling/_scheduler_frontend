@@ -82,20 +82,25 @@ function addEventSubmit() {
       user: user,
     };
 
-    const response = await fetch("https://scheduler-21.herokuapp.com/event/add", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${JSON.parse(
-          localStorage.getItem("jwt") ?? ""
-        )}`,
-        "Access-Control-Allow-Origin": "*",
-      },
-      body: JSON.stringify(body),
-    });
+    const response = await fetch(
+      "https://scheduler-21.herokuapp.com/event/add",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${JSON.parse(
+            localStorage.getItem("jwt") ?? ""
+          )}`,
+          "Access-Control-Allow-Origin": "*",
+        },
+        body: JSON.stringify(body),
+      }
+    );
     if (response.status === 200) {
       deactiveAllErrorMessages(errorMessages);
-      window.location.replace("https://maxerling.github.io/scheduler_frontend/scheduler.html");
+      window.location.replace(
+        "https://maxerling.github.io/_scheduler_frontend/scheduler.html"
+      );
     } else {
       const data: ErrorResponse = await response.json();
       activeErrorMessage(errorMessages[3], data.message);
@@ -164,14 +169,19 @@ async function getUserFromJWT() {
   const parsedToken = JSON.parse(token);
   const decodedToken: JWTData = jwt.decode(parsedToken) as JWTData;
   const username = decodedToken.sub;
-  const response = await fetch(`https://scheduler-21.herokuapp.com/user/${username}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${JSON.parse(localStorage.getItem("jwt") ?? "")}`,
-      "Access-Control-Allow-Origin": "*",
-    },
-  });
+  const response = await fetch(
+    `https://scheduler-21.herokuapp.com/user/${username}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${JSON.parse(
+          localStorage.getItem("jwt") ?? ""
+        )}`,
+        "Access-Control-Allow-Origin": "*",
+      },
+    }
+  );
   const user = (await response.json()) as User;
 
   return user;
@@ -261,7 +271,9 @@ async function getData() {
     .then((data) => (loggedUser = data))
     .catch((err) => {
       localStorage.clear();
-      window.location.replace("https://maxerling.github.io/scheduler_frontend/login.html");
+      window.location.replace(
+        "https://maxerling.github.io/_scheduler_frontend/"
+      );
       alert("someting went wrong, try agin!");
       console.log(err);
     });
