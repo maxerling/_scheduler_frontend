@@ -274,6 +274,7 @@ async function getData() {
     console.log(response.body);
     setTimeout(() => {}, 10000);
   } catch (err) {
+    localStorage.clear();
     console.log(err);
   }
 }
