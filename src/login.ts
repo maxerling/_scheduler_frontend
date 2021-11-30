@@ -36,12 +36,14 @@ async function formLoginSubmit() {
           .then((response) => response.json())
           .then((data) => {
             if (data.jwt != null) {
-              localStorage.setItem('jwt', JSON.stringify(data.jwt));
-              localStorage.setItem('user', JSON.stringify(usernameField.value));
-              window.location.replace(
-                'https://maxerling.github.io/_scheduler_frontend/scheduler.html'
-              );
+              localStorage.clear();
             }
+
+            localStorage.setItem('jwt', JSON.stringify(data.jwt));
+            localStorage.setItem('user', JSON.stringify(usernameField.value));
+            window.location.replace(
+              'https://maxerling.github.io/_scheduler_frontend/scheduler.html'
+            );
           })
           .catch((error) => {
             console.error('Error:', error);
