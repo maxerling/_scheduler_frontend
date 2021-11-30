@@ -44,14 +44,16 @@ async function formLoginSubmit() {
             const token = JSON.stringify(data.jwt);
             if (token == undefined) {
               alert('error, try again');
+              localStorage.clear();
               return;
-            }
-            localStorage.setItem('jwt', token);
-            localStorage.setItem('user', JSON.stringify(usernameField.value));
+            } else {
+              localStorage.setItem('jwt', token);
+              localStorage.setItem('user', JSON.stringify(usernameField.value));
 
-            window.location.replace(
-              'https://maxerling.github.io/_scheduler_frontend/scheduler.html'
-            );
+              window.location.replace(
+                'https://maxerling.github.io/_scheduler_frontend/scheduler.html'
+              );
+            }
           })
           .catch((error) => {
             console.error('Error:', error);
