@@ -254,10 +254,8 @@ function isEmptyField(valueField: string) {
 
 async function getData() {
   const username = localStorage.getItem('user') ?? '';
-  console.log('username', username);
   if (username == '') return;
   const parsedUsername = JSON.parse(username);
-  console.log('parsedUsername', parsedUsername);
   await fetch(`https://scheduler-21.herokuapp.com/users/${parsedUsername}`, {
     method: 'GET',
     headers: {
@@ -273,7 +271,7 @@ async function getData() {
       window.location.replace(
         'https://maxerling.github.io/_scheduler_frontend/'
       );
-      //alert('someting went wrong, try agin!');
+      alert('someting went wrong, try agin!');
       console.log(err);
     });
 }
