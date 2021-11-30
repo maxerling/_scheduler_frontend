@@ -9,7 +9,6 @@ const END_TIME_LIMIT = '23:59';
 setup();
 
 async function setup() {
-  alert('d');
   auth();
   if (await getData()) {
     checkCurrentWeek();
@@ -272,7 +271,8 @@ async function getData() {
         },
       }
     );
-    console.log(response.body);
+    const body = await response.json();
+    console.log(body);
     setTimeout(() => {}, 10000);
     return true;
   } catch (err) {
