@@ -9,6 +9,7 @@ const END_TIME_LIMIT = '23:59';
 setup();
 
 async function setup() {
+  alert('d');
   auth();
   await getData();
   checkCurrentWeek();
@@ -264,14 +265,21 @@ async function getData() {
       Authorization: `Bearer ${JSON.parse(localStorage.getItem('jwt') ?? '')}`,
     },
   })
-    .then((response) => response.json())
-    .then((data) => (loggedUser = data))
+    .then((response) => {
+      console.log(response.json());
+      return response.json();
+    })
+    .then((data) => {
+      console.log(data);
+      loggedUser = data;
+      setTimeout(() => {}, 10000);
+    })
     .catch((err) => {
-      localStorage.clear();
-      window.location.replace(
-        'https://maxerling.github.io/_scheduler_frontend/'
-      );
-      alert('someting went wrong, try agin!');
+      // localStorage.clear();
+      // window.location.replace(
+      //   'https://maxerling.github.io/_scheduler_frontend/'
+      // );
+      // alert('someting went wrong, try agin!');
       console.log(err);
     });
 }
