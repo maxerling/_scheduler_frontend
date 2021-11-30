@@ -257,31 +257,25 @@ async function getData() {
   const username = localStorage.getItem('user') ?? '';
   if (username == '') return;
   const parsedUsername = JSON.parse(username);
-  await fetch(`https://scheduler-21.herokuapp.com/users/${parsedUsername}`, {
-    method: 'GET',
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${JSON.parse(localStorage.getItem('jwt') ?? '')}`,
-    },
-  })
-    .then((response) => {
-      console.log(response.json());
-      return response.json();
-    })
-    .then((data) => {
-      console.log(data);
-      loggedUser = data;
-      setTimeout(() => {}, 10000);
-    })
-    .catch((err) => {
-      // localStorage.clear();
-      // window.location.replace(
-      //   'https://maxerling.github.io/_scheduler_frontend/'
-      // );
-      // alert('someting went wrong, try agin!');
-      console.log(err);
-    });
+  try {
+    const response = await fetch(
+      `https://scheduler-21.herokuapp.com/users/${parsedUsername}`,
+      {
+        method: 'GET',
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${JSON.parse(
+            localStorage.getItem('jwt') ?? ''
+          )}`,
+        },
+      }
+    );
+    console.log(response.body);
+    setTimeout(() => {}, 10000);
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 function onClickTimeAddEvent() {
