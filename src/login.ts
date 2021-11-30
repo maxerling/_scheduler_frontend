@@ -41,8 +41,12 @@ async function formLoginSubmit() {
             if (data.jwt != null) {
               localStorage.clear();
             }
-
-            localStorage.setItem('jwt', JSON.stringify(data.jwt));
+            const token = JSON.stringify(data.jwt);
+            if (token == undefined) {
+              alert('error, try again');
+              return;
+            }
+            localStorage.setItem('jwt', token);
             localStorage.setItem('user', JSON.stringify(usernameField.value));
 
             window.location.replace(

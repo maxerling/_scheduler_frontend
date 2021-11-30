@@ -10,7 +10,7 @@ setup();
 
 async function setup() {
   auth();
-  if (await getData()) {
+  if (isDataCollected()) {
     checkCurrentWeek();
     setupCalenderButtons();
     welcomeMessage(loggedUser);
@@ -253,6 +253,11 @@ function isEmptyField(valueField: string) {
   return false;
 }
 
+function isDataCollected() {
+  getData();
+  return true;
+}
+
 async function getData() {
   const username = localStorage.getItem('user') ?? '';
   if (username == '') return;
@@ -272,8 +277,9 @@ async function getData() {
       }
     );
     const body = await response.json();
-    console.log(body);
-    setTimeout(() => {}, 10000);
+    loggedUser = body;
+    console.log(loggedUser);
+    console.log(loggedUser.bookedAppointments);
     return true;
   } catch (err) {
     localStorage.clear();
