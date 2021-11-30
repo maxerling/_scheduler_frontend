@@ -14,7 +14,7 @@ async function formLoginSubmit() {
   const submitEle = document.getElementById('login-submit');
   submitEle === null || submitEle === void 0
     ? void 0
-    : submitEle.addEventListener('click', (e) => {
+    : submitEle.addEventListener('click', async (e) => {
         e.preventDefault();
         const usernameField = document.getElementById(
           'username'
@@ -22,11 +22,11 @@ async function formLoginSubmit() {
         const passwordField = document.getElementById(
           'password'
         ) as HTMLInputElement;
-        fetch('https://scheduler-21.herokuapp.com/auth', {
+        await fetch('https://scheduler-21.herokuapp.com/auth', {
           method: 'POST',
           headers: {
             'Access-Control-Allow-Origin': '*',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             username: usernameField?.value,
