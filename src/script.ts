@@ -11,13 +11,14 @@ setup();
 async function setup() {
   alert('d');
   auth();
-  await getData();
-  checkCurrentWeek();
-  setupCalenderButtons();
-  welcomeMessage(loggedUser);
-  onClickTimeAddEvent();
-  addEventSubmit();
-  logOutButton();
+  if (await getData()) {
+    checkCurrentWeek();
+    setupCalenderButtons();
+    welcomeMessage(loggedUser);
+    onClickTimeAddEvent();
+    addEventSubmit();
+    logOutButton();
+  }
 }
 
 function addEventSubmit() {
@@ -273,10 +274,12 @@ async function getData() {
     );
     console.log(response.body);
     setTimeout(() => {}, 10000);
+    return true;
   } catch (err) {
     localStorage.clear();
     console.log(err);
   }
+  return false;
 }
 
 function onClickTimeAddEvent() {
