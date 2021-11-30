@@ -33,17 +33,23 @@ async function formLoginSubmit() {
             password: passwordField?.value ?? '',
           }),
         })
-          .then((response) => response.json())
+          .then((response) => {
+            const responseJson = response.json();
+            console.log(responseJson);
+            return responseJson;
+          })
           .then((data) => {
+            console.log('data', data);
+            console.log('jwt', data.jwt);
             if (data.jwt != null) {
               localStorage.clear();
             }
 
             localStorage.setItem('jwt', JSON.stringify(data.jwt));
             localStorage.setItem('user', JSON.stringify(usernameField.value));
-            window.location.replace(
-              'https://maxerling.github.io/_scheduler_frontend/scheduler.html'
-            );
+            // window.location.replace(
+            //   'https://maxerling.github.io/_scheduler_frontend/scheduler.html'
+            // );
           })
           .catch((error) => {
             console.error('Error:', error);

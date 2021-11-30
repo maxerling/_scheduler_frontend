@@ -254,8 +254,10 @@ function isEmptyField(valueField: string) {
 
 async function getData() {
   const username = localStorage.getItem('user') ?? '';
+  console.log('username', username);
   if (username == '') return;
   const parsedUsername = JSON.parse(username);
+  console.log('parsedUsername', parsedUsername);
   await fetch(`https://scheduler-21.herokuapp.com/user/${parsedUsername}`, {
     method: 'GET',
     headers: {
