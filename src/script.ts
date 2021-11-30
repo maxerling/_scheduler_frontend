@@ -86,6 +86,7 @@ function addEventSubmit() {
       {
         method: 'POST',
         headers: {
+          'Access-Control-Allow-Origin': '*',
           'Content-Type': 'application/json',
           Authorization: `Bearer ${jwtToken}`,
         },
@@ -170,6 +171,7 @@ async function getUserFromJWT() {
     {
       method: 'GET',
       headers: {
+        'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json',
         Authorization: `Bearer ${JSON.parse(
           localStorage.getItem('jwt') ?? ''
@@ -257,6 +259,7 @@ async function getData() {
   await fetch(`https://scheduler-21.herokuapp.com/user/${parsedUsername}`, {
     method: 'GET',
     headers: {
+      'Access-Control-Allow-Origin': '*',
       'Content-Type': 'application/json',
       Authorization: `Bearer ${JSON.parse(localStorage.getItem('jwt') ?? '')}`,
     },

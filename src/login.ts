@@ -25,6 +25,7 @@ async function formLoginSubmit() {
         fetch('https://scheduler-21.herokuapp.com/auth', {
           method: 'POST',
           headers: {
+            'Access-Control-Allow-Origin': '*',
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
