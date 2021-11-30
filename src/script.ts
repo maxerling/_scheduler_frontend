@@ -167,7 +167,7 @@ async function getUserFromJWT() {
   const decodedToken: JWTData = jwt.decode(parsedToken) as JWTData;
   const username = decodedToken.sub;
   const response = await fetch(
-    `https://scheduler-21.herokuapp.com/user/${username}`,
+    `https://scheduler-21.herokuapp.com/users/${username}`,
     {
       method: 'GET',
       headers: {
@@ -258,7 +258,7 @@ async function getData() {
   if (username == '') return;
   const parsedUsername = JSON.parse(username);
   console.log('parsedUsername', parsedUsername);
-  await fetch(`https://scheduler-21.herokuapp.com/user/${parsedUsername}`, {
+  await fetch(`https://scheduler-21.herokuapp.com/users/${parsedUsername}`, {
     method: 'GET',
     headers: {
       'Access-Control-Allow-Origin': '*',
@@ -273,7 +273,7 @@ async function getData() {
       window.location.replace(
         'https://maxerling.github.io/_scheduler_frontend/'
       );
-      alert('someting went wrong, try agin!');
+      //alert('someting went wrong, try agin!');
       console.log(err);
     });
 }

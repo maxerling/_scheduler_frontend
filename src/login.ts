@@ -47,6 +47,7 @@ async function formLoginSubmit() {
 
             localStorage.setItem('jwt', JSON.stringify(data.jwt));
             localStorage.setItem('user', JSON.stringify(usernameField.value));
+            alert('d');
             // window.location.replace(
             //   'https://maxerling.github.io/_scheduler_frontend/scheduler.html'
             // );
