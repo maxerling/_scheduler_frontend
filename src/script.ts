@@ -1,16 +1,15 @@
-import * as jwt from "jsonwebtoken";
-import moment from "moment";
-import { authorization } from "./authorization";
-import { logOutButton } from "./authentication";
+import * as jwt from 'jsonwebtoken';
+import { auth } from './authorization';
+import { logOutButton } from './authentication';
 /* GLOBAL */
 var loggedUser: User;
-const STAR_TIME_LIMIT = "04:00";
-const END_TIME_LIMIT = "23:59";
+const STAR_TIME_LIMIT = '04:00';
+const END_TIME_LIMIT = '23:59';
 /* ---- */
 setup();
 
 async function setup() {
-  authorization();
+  auth();
   await getData();
   checkCurrentWeek();
   setupCalenderButtons();
@@ -21,7 +20,7 @@ async function setup() {
 }
 
 function addEventSubmit() {
-  const addEventForm = document.getElementById("add-event")!;
+  const addEventForm = document.getElementById('add-event')!;
   const nameInput: HTMLInputElement = addEventForm?.children[0].children[1]
     .children[0] as HTMLInputElement;
   const dateInput: HTMLInputElement = addEventForm?.children[1].children[1]
@@ -34,7 +33,7 @@ function addEventSubmit() {
     .children[0] as HTMLInputElement;
   const submitBtn = addEventForm?.children[5];
   const errorMessages = document.getElementsByClassName(
-    "error-message"
+    'error-message'
   ) as HTMLCollectionOf<HTMLElement>;
 
   const startTimeField = addEventForm?.children[2].children[1]
@@ -42,7 +41,7 @@ function addEventSubmit() {
   const endTimeField = addEventForm?.children[3].children[1]
     .children[0] as HTMLInputElement;
 
-  submitBtn?.addEventListener("click", async (e) => {
+  submitBtn?.addEventListener('click', async (e) => {
     e.preventDefault();
 
     if (isEmpty(addEventForm, errorMessages)) return;
@@ -71,7 +70,7 @@ function addEventSubmit() {
     }
 
     const user = await getUserFromJWT();
-    if (user == "") return;
+    if (user == '') return;
 
     const body = {
       name: `${nameInput.value}`,
@@ -81,17 +80,14 @@ function addEventSubmit() {
       description: `${descInput.value}`,
       user: user,
     };
-
+    const jwtToken = JSON.parse(localStorage.getItem('jwt') as string);
     const response = await fetch(
-      "https://scheduler-21.herokuapp.com/event/add",
+      'https://scheduler-21.herokuapp.com/event/add',
       {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${JSON.parse(
-            localStorage.getItem("jwt") ?? ""
-          )}`,
-          "Access-Control-Allow-Origin": "*",
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwtToken}`,
         },
         body: JSON.stringify(body),
       }
@@ -99,7 +95,7 @@ function addEventSubmit() {
     if (response.status === 200) {
       deactiveAllErrorMessages(errorMessages);
       window.location.replace(
-        "https://maxerling.github.io/_scheduler_frontend/scheduler.html"
+        'https://maxerling.github.io/_scheduler_frontend/scheduler.html'
       );
     } else {
       const data: ErrorResponse = await response.json();
@@ -130,10 +126,10 @@ function timeWithinTimeLimit(
     timeInputDate.getTime() <= endTimeDate.getTime();
   if (!isBetweenLimit) {
     errorMessageElement.textContent = `Needs to be within ${startTimeLimit}-${endTimeLimit}`;
-    errorMessageElement.style.display = "flex";
+    errorMessageElement.style.display = 'flex';
     return true;
   }
-  errorMessageElement.style.display = "none";
+  errorMessageElement.style.display = 'none';
   return false;
 }
 
@@ -142,7 +138,7 @@ function convertTimeIntoDate(seconds: number) {
 }
 
 function formatTimeIntoSeconds(digitalClock: string) {
-  const [hours, minutes] = digitalClock.split(":");
+  const [hours, minutes] = digitalClock.split(':');
   const timeInSeconds = Number(hours) * 60 * 60 + Number(minutes) * 60;
   return timeInSeconds;
 }
@@ -151,7 +147,7 @@ function activeErrorMessage(
   errorMessageElement: HTMLElement,
   errorMessageText: string
 ) {
-  errorMessageElement.style.display = "flex";
+  errorMessageElement.style.display = 'flex';
   errorMessageElement.textContent = errorMessageText;
 }
 
@@ -159,26 +155,25 @@ function deactiveAllErrorMessages(
   errorMessageElements: HTMLCollectionOf<HTMLElement>
 ) {
   for (let i = 0; i < errorMessageElements.length; i++) {
-    errorMessageElements[i].style.display = "none";
+    errorMessageElements[i].style.display = 'none';
   }
 }
 
 async function getUserFromJWT() {
-  const token = localStorage.getItem("jwt") ?? "";
-  if (token == "") return "";
+  const token = localStorage.getItem('jwt') ?? '';
+  if (token == '') return '';
   const parsedToken = JSON.parse(token);
   const decodedToken: JWTData = jwt.decode(parsedToken) as JWTData;
   const username = decodedToken.sub;
   const response = await fetch(
     `https://scheduler-21.herokuapp.com/user/${username}`,
     {
-      method: "GET",
+      method: 'GET',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${JSON.parse(
-          localStorage.getItem("jwt") ?? ""
+          localStorage.getItem('jwt') ?? ''
         )}`,
-        "Access-Control-Allow-Origin": "*",
       },
     }
   );
@@ -195,8 +190,8 @@ function isStartTimeGreaterThanEndTime(
     .children[0] as HTMLInputElement;
   const endTimeField = addEventForm?.children[3].children[1]
     .children[0] as HTMLInputElement;
-  const splittedStartTimeValue = startTimeField.value.split(":");
-  const splittedEndTimeValue = endTimeField.value.split(":");
+  const splittedStartTimeValue = startTimeField.value.split(':');
+  const splittedEndTimeValue = endTimeField.value.split(':');
 
   const startTimeDate = new Date().setHours(
     Number(splittedStartTimeValue[0]),
@@ -209,13 +204,13 @@ function isStartTimeGreaterThanEndTime(
     0
   );
   if (startTimeDate > endTimeDate) {
-    errorMessages[3].style.display = "flex";
+    errorMessages[3].style.display = 'flex';
     errorMessages[3].textContent = "Can't be lesser than start time!";
     return true;
   }
 
   if (startTimeDate == endTimeDate) {
-    errorMessages[3].style.display = "flex";
+    errorMessages[3].style.display = 'flex';
     errorMessages[3].textContent = "Can't be equal to start time!";
     return true;
   }
@@ -232,10 +227,10 @@ function isEmpty(
     const field = addEventForm?.children[i].children[1]
       .children[0] as HTMLInputElement;
     if (!isEmptyField(field.value)) {
-      errorMessages[i].style.display = "none";
+      errorMessages[i].style.display = 'none';
     } else {
-      errorMessages[i].style.display = "flex";
-      errorMessages[i].textContent = "This field is required";
+      errorMessages[i].style.display = 'flex';
+      errorMessages[i].textContent = 'This field is required';
       j++;
     }
   }
@@ -248,7 +243,7 @@ function isEmpty(
 }
 
 function isEmptyField(valueField: string) {
-  if (valueField == "") {
+  if (valueField == '') {
     return true;
   }
 
@@ -256,15 +251,14 @@ function isEmptyField(valueField: string) {
 }
 
 async function getData() {
-  const username = localStorage.getItem("user") ?? "";
-  if (username == "") return;
+  const username = localStorage.getItem('user') ?? '';
+  if (username == '') return;
   const parsedUsername = JSON.parse(username);
   await fetch(`https://scheduler-21.herokuapp.com/user/${parsedUsername}`, {
-    method: "GET",
+    method: 'GET',
     headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${JSON.parse(localStorage.getItem("jwt") ?? "")}`,
-      "Access-Control-Allow-Origin": "*",
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${JSON.parse(localStorage.getItem('jwt') ?? '')}`,
     },
   })
     .then((response) => response.json())
@@ -272,39 +266,39 @@ async function getData() {
     .catch((err) => {
       localStorage.clear();
       window.location.replace(
-        "https://maxerling.github.io/_scheduler_frontend/"
+        'https://maxerling.github.io/_scheduler_frontend/'
       );
-      alert("someting went wrong, try agin!");
+      alert('someting went wrong, try agin!');
       console.log(err);
     });
 }
 
 function onClickTimeAddEvent() {
-  const timeTable = document.getElementsByClassName("td-time");
-  const modalEle = document.getElementsByClassName("modal")[1];
-  const closeButton = document.getElementsByClassName("delete");
+  const timeTable = document.getElementsByClassName('td-time');
+  const modalEle = document.getElementsByClassName('modal')[1];
+  const closeButton = document.getElementsByClassName('delete');
   let startTimeInput: HTMLInputElement = document.getElementById(
-    "start-time"
+    'start-time'
   ) as HTMLInputElement;
 
   for (let i = 0; i < timeTable.length; i++) {
-    timeTable[i].addEventListener("click", () => {
-      startTimeInput.value = timeTable[i].textContent ?? "";
-      modalEle.classList.add("is-active");
+    timeTable[i].addEventListener('click', () => {
+      startTimeInput.value = timeTable[i].textContent ?? '';
+      modalEle.classList.add('is-active');
     });
   }
-  closeButton[1].addEventListener("click", () =>
-    modalEle.classList.remove("is-active")
+  closeButton[1].addEventListener('click', () =>
+    modalEle.classList.remove('is-active')
   );
 }
 
 async function createEventElements(): Promise<void> {
   loggedUser.bookedAppointments.map((event: Event): void => {
-    const weekdayParentEle = document.getElementById("weekdays-name");
-    const monthAndYearEle = document.getElementById("cal-month");
-    let splittedEventDate: string[] = event.date.split("-");
+    const weekdayParentEle = document.getElementById('weekdays-name');
+    const monthAndYearEle = document.getElementById('cal-month');
+    let splittedEventDate: string[] = event.date.split('-');
     let splittedMonthAndYear: string[] =
-      monthAndYearEle?.textContent?.split(" ") ?? [];
+      monthAndYearEle?.textContent?.split(' ') ?? [];
     let eventDateWeekend = `${splittedEventDate[2]}/${splittedEventDate[1]}`;
 
     if (
@@ -319,17 +313,17 @@ async function createEventElements(): Promise<void> {
           )
         ) {
           const eventCollectionEle = document.getElementById(`day-${i + 1}`);
-          const eventEle = document.createElement("div");
-          eventEle.classList.add("event");
+          const eventEle = document.createElement('div');
+          eventEle.classList.add('event');
 
-          eventEle.style.backgroundColor = "#000";
-          eventEle.style.height = "50.198px";
+          eventEle.style.backgroundColor = '#000';
+          eventEle.style.height = '50.198px';
           const name = event.name;
           //const description = event.description;
           const startTime = event.startTime;
           const endTime = event.endTime;
-          const nameEle = document.createElement("p");
-          const timeEle = document.createElement("h6");
+          const nameEle = document.createElement('p');
+          const timeEle = document.createElement('h6');
           timeEle.textContent = `${startTime}-${endTime}`;
           nameEle.textContent = `${name}`;
           const [topValue, heightValue] = timePosition(startTime, endTime);
@@ -348,33 +342,33 @@ async function createEventElements(): Promise<void> {
 }
 
 function onClickEvent(event: Event, eventEle: HTMLDivElement) {
-  const modalEle = document.getElementsByClassName("modal")[0];
+  const modalEle = document.getElementsByClassName('modal')[0];
   const modalCardHeadEle =
-    document.getElementsByClassName("modal-card")[0].children[0];
+    document.getElementsByClassName('modal-card')[0].children[0];
   const modalCardBodyEle =
-    document.getElementsByClassName("modal-card")[0].children[1];
+    document.getElementsByClassName('modal-card')[0].children[1];
 
-  eventEle.addEventListener("click", () => {
+  eventEle.addEventListener('click', () => {
     modalCardHeadEle.children[0].textContent = event.name;
     modalCardBodyEle.children[0].firstChild!.textContent = `${event.startTime}-${event.endTime}`;
     modalCardBodyEle.children[0].lastChild!.textContent = `${event.date}`;
     modalCardBodyEle.children[1].textContent = `${event.description}`;
 
-    modalEle.classList.add("is-active");
+    modalEle.classList.add('is-active');
   });
-  modalCardHeadEle.children[1].addEventListener("click", () =>
-    modalEle.classList.remove("is-active")
+  modalCardHeadEle.children[1].addEventListener('click', () =>
+    modalEle.classList.remove('is-active')
   );
 }
 
 function welcomeMessage(loggedUser: User): void {
-  let welcomeMessage = document.getElementById("welcome-message");
-  welcomeMessage!.textContent = `Welcome ${loggedUser.firstName}` ?? "";
+  let welcomeMessage = document.getElementById('welcome-message');
+  welcomeMessage!.textContent = `Welcome ${loggedUser.firstName}` ?? '';
 }
 
 function timePosition(startTime: string, endTime: string): number[] {
-  const [endTimeHours, endTimeMinutes] = endTime.split(":");
-  const [startTimeHours, startTimeMinutes] = startTime.split(":");
+  const [endTimeHours, endTimeMinutes] = endTime.split(':');
+  const [startTimeHours, startTimeMinutes] = startTime.split(':');
   let startAndEndAttr: number[] = [];
   const topValue = 151 + (Number(startTimeHours) - 4) * 50;
   startAndEndAttr.push(topValue);
@@ -393,18 +387,18 @@ function checkCurrentWeek(): void {
 }
 
 function moveWeek(weekAmount: number): void {
-  const eventParent = document.getElementById("event-scheduler");
+  const eventParent = document.getElementById('event-scheduler');
 
   for (let i = 1; i < 8; i++) {
-    eventParent!.children[i].textContent = "";
-    eventParent!.children[i].classList.remove("selected");
+    eventParent!.children[i].textContent = '';
+    eventParent!.children[i].classList.remove('selected');
   }
-  const weekdayParentEle = document.getElementById("weekdays-name");
-  const monthAndYearEle = document.getElementById("cal-month");
+  const weekdayParentEle = document.getElementById('weekdays-name');
+  const monthAndYearEle = document.getElementById('cal-month');
   const monthAndYearArray: string[] =
-    monthAndYearEle?.textContent?.split(" ") ?? [];
+    monthAndYearEle?.textContent?.split(' ') ?? [];
   const [dayString, date]: string[] =
-    weekdayParentEle?.children[1]?.textContent?.split(" ") ?? [];
+    weekdayParentEle?.children[1]?.textContent?.split(' ') ?? [];
 
   const weekday: number = Number(date.substring(0, 2));
   const month: number = Number(date.substring(3));
@@ -415,10 +409,10 @@ function moveWeek(weekAmount: number): void {
   let randDatePlusOne: Date = new Date(randDate);
   randDatePlusOne.setDate(randDatePlusOne.getDate() + weekAmount);
 
-  const randDateFArray: string[] = randDatePlusOne.toString().split(" ");
+  const randDateFArray: string[] = randDatePlusOne.toString().split(' ');
 
-  randDateFArray[1] = randDatePlusOne.toLocaleString("en-US", {
-    month: "long",
+  randDateFArray[1] = randDatePlusOne.toLocaleString('en-US', {
+    month: 'long',
   });
   const isSingleDigitMonthPlusOne =
     randDatePlusOne.getMonth() + 1 < 10
@@ -432,7 +426,7 @@ function moveWeek(weekAmount: number): void {
 
   for (let i = 1; i < 7; i++) {
     randDatePlusOne.setDate(randDatePlusOne.getDate() + 1);
-    const dateOWFPlusOneArray: string[] = randDatePlusOne.toString().split(" ");
+    const dateOWFPlusOneArray: string[] = randDatePlusOne.toString().split(' ');
     weekdayParentEle!.children[
       i + 1
     ].textContent = `${dateOWFPlusOneArray[0].toUpperCase()} ${
@@ -446,58 +440,58 @@ function moveWeek(weekAmount: number): void {
 }
 function getMonthFromNumberToString(month: number): string {
   if (month === 1) {
-    return "January";
+    return 'January';
   } else if (month === 2) {
-    return "February";
+    return 'February';
   } else if (month === 3) {
-    return "March";
+    return 'March';
   } else if (month === 4) {
-    return "April";
+    return 'April';
   } else if (month === 5) {
-    return "May";
+    return 'May';
   } else if (month === 6) {
-    return "June";
+    return 'June';
   } else if (month === 7) {
-    return "July";
+    return 'July';
   } else if (month === 8) {
-    return "August";
+    return 'August';
   } else if (month === 9) {
-    return "September";
+    return 'September';
   } else if (month === 10) {
-    return "October";
+    return 'October';
   } else if (month === 11) {
-    return "November";
+    return 'November';
   } else if (month === 12) {
-    return "December";
+    return 'December';
   }
 
-  return "";
+  return '';
 }
 
 function convertMonthFromStringToNumber(monthInString: string): number {
-  if (monthInString === "Jan") {
+  if (monthInString === 'Jan') {
     return 1;
-  } else if (monthInString === "Feb") {
+  } else if (monthInString === 'Feb') {
     return 2;
-  } else if (monthInString === "Mar") {
+  } else if (monthInString === 'Mar') {
     return 3;
-  } else if (monthInString === "Apr") {
+  } else if (monthInString === 'Apr') {
     return 4;
-  } else if (monthInString === "May") {
+  } else if (monthInString === 'May') {
     return 5;
-  } else if (monthInString === "Jun") {
+  } else if (monthInString === 'Jun') {
     return 6;
-  } else if (monthInString === "Jul") {
+  } else if (monthInString === 'Jul') {
     return 7;
-  } else if (monthInString === "Aug") {
+  } else if (monthInString === 'Aug') {
     return 8;
-  } else if (monthInString === "Sep") {
+  } else if (monthInString === 'Sep') {
     return 9;
-  } else if (monthInString === "Oct") {
+  } else if (monthInString === 'Oct') {
     return 10;
-  } else if (monthInString === "Nov") {
+  } else if (monthInString === 'Nov') {
     return 11;
-  } else if (monthInString === "Dec") {
+  } else if (monthInString === 'Dec') {
     return 12;
   }
 
@@ -505,14 +499,14 @@ function convertMonthFromStringToNumber(monthInString: string): number {
 }
 
 function setupCalenderButtons() {
-  const nextButton = document.getElementById("cal-next")!;
-  const prevButton = document.getElementById("cal-prev")!;
+  const nextButton = document.getElementById('cal-next')!;
+  const prevButton = document.getElementById('cal-prev')!;
   calenderButton(nextButton, 7);
   calenderButton(prevButton, -7);
 }
 
 function calenderButton(button: HTMLElement, weekAmount: number): void {
-  button?.addEventListener("click", () => {
+  button?.addEventListener('click', () => {
     moveWeek(weekAmount);
     todaysDateHighlight();
   });
@@ -521,20 +515,20 @@ function calenderButton(button: HTMLElement, weekAmount: number): void {
 function todaysDateHighlight(): boolean {
   const today: Date = new Date();
 
-  const splittedString: string[] = today.toString().split(" ");
+  const splittedString: string[] = today.toString().split(' ');
 
   let eleNum: number;
-  if ((eleNum = checkDay(splittedString[0] + " " + splittedString[2])) != -1) {
+  if ((eleNum = checkDay(splittedString[0] + ' ' + splittedString[2])) != -1) {
     const todaysDateEle = document.getElementById(`day-0${eleNum}`);
     const fromCorrectDayDateGetMonth = Number(
-      todaysDateEle?.innerHTML.split("/")[1]
+      todaysDateEle?.innerHTML.split('/')[1]
     );
     if (
       fromCorrectDayDateGetMonth ===
       convertMonthFromStringToNumber(splittedString[1])
     ) {
       const todayEle = document.getElementById(`day-${eleNum}`);
-      todayEle?.classList.add("selected");
+      todayEle?.classList.add('selected');
       return true;
     }
   }
@@ -544,7 +538,7 @@ function todaysDateHighlight(): boolean {
 function checkDay(currentDay: string): number {
   const currentWeek: string[] =
     document
-      ?.querySelector(".cal-head")
+      ?.querySelector('.cal-head')
       ?.childNodes[1]?.textContent?.split(`\n`) ?? [];
   for (let i: number = 0; i < currentWeek.length; i++) {
     if (currentWeek[i].includes(`${currentDay.toUpperCase()}`)) {

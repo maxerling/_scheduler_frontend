@@ -1,7 +1,7 @@
 export function logOutButton() {
-  const logoutBtn = document.getElementById("logout");
-  logoutBtn?.addEventListener("click", () => {
+  const logoutBtn = document.getElementById('logout');
+  logoutBtn?.addEventListener('click', () => {
     localStorage.clear();
-    window.location.replace("https://maxerling.github.io/_scheduler_frontend/");
+    window.location.replace('https://maxerling.github.io/_scheduler_frontend/');
   });
 }
