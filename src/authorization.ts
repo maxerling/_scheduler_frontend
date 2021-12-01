@@ -24,9 +24,16 @@ function redirectToLogin() {
 }
 
 export function loggedInUser() {
-  const token = localStorage.getItem('jwt') ?? '';
-  if (token == '') return;
-  const parsedToken = JSON.parse(token);
+  const token = localStorage.getItem('jwt');
+  let parsedToken;
+  if (token === 'undefined' || token === undefined || token === null) {
+    localStorage.clear();
+    return;
+  } else {
+    console.log('/');
+    parsedToken = JSON.parse(token);
+  }
+
   const currentDate = new Date();
   const decodedToken: JWTData = jwt.decode(parsedToken) as JWTData;
   const expDate = decodedToken.exp;

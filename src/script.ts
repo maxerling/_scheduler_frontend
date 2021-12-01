@@ -10,7 +10,7 @@ setup();
 
 async function setup() {
   auth();
-  if (isDataCollected()) {
+  if (await isDataCollected()) {
     checkCurrentWeek();
     setupCalenderButtons();
     welcomeMessage(loggedUser);
@@ -253,8 +253,8 @@ function isEmptyField(valueField: string) {
   return false;
 }
 
-function isDataCollected() {
-  getData();
+async function isDataCollected() {
+  await getData();
   return true;
 }
 
@@ -278,11 +278,9 @@ async function getData() {
     );
     const body = await response.json();
     loggedUser = body;
-    console.log(loggedUser);
-    console.log(loggedUser.bookedAppointments);
     return true;
   } catch (err) {
-    localStorage.clear();
+    alert(err);
     console.log(err);
   }
   return false;
@@ -376,9 +374,9 @@ function onClickEvent(event: Event, eventEle: HTMLDivElement) {
   );
 }
 
-function welcomeMessage(loggedUser: User): void {
+function welcomeMessage(user: User): void {
   let welcomeMessage = document.getElementById('welcome-message');
-  welcomeMessage!.textContent = `Welcome ${loggedUser.firstName}` ?? '';
+  welcomeMessage!.textContent = `Welcome ${user.firstName}`;
 }
 
 function timePosition(startTime: string, endTime: string): number[] {
@@ -429,7 +427,16 @@ function moveWeek(weekAmount: number): void {
   randDateFArray[1] = randDatePlusOne.toLocaleString('en-US', {
     month: 'long',
   });
-  const isSingleDigitMonthPlusOne =
+
+  /*
+  date
+  weekdays-name[01-07]
+
+  loop < 7
+  weekdays-name[i] = date
+
+  */
+  let isSingleDigitMonthPlusOne =
     randDatePlusOne.getMonth() + 1 < 10
       ? `0${randDatePlusOne.getMonth() + 1}`
       : `${randDatePlusOne.getMonth() + 1}`;
@@ -441,6 +448,10 @@ function moveWeek(weekAmount: number): void {
 
   for (let i = 1; i < 7; i++) {
     randDatePlusOne.setDate(randDatePlusOne.getDate() + 1);
+    isSingleDigitMonthPlusOne =
+      randDatePlusOne.getMonth() + 1 < 10
+        ? `0${randDatePlusOne.getMonth() + 1}`
+        : `${randDatePlusOne.getMonth() + 1}`;
     const dateOWFPlusOneArray: string[] = randDatePlusOne.toString().split(' ');
     weekdayParentEle!.children[
       i + 1
@@ -533,11 +544,13 @@ function todaysDateHighlight(): boolean {
   const splittedString: string[] = today.toString().split(' ');
 
   let eleNum: number;
+
   if ((eleNum = checkDay(splittedString[0] + ' ' + splittedString[2])) != -1) {
     const todaysDateEle = document.getElementById(`day-0${eleNum}`);
     const fromCorrectDayDateGetMonth = Number(
       todaysDateEle?.innerHTML.split('/')[1]
     );
+
     if (
       fromCorrectDayDateGetMonth ===
       convertMonthFromStringToNumber(splittedString[1])
@@ -554,13 +567,19 @@ function checkDay(currentDay: string): number {
   const currentWeek: string[] =
     document
       ?.querySelector('.cal-head')
-      ?.childNodes[1]?.textContent?.split(`\n`) ?? [];
-  for (let i: number = 0; i < currentWeek.length; i++) {
-    if (currentWeek[i].includes(`${currentDay.toUpperCase()}`)) {
-      return i - 1;
+      ?.childNodes[1]?.textContent?.trim()
+      .split(' ') ?? [];
+  let classNameNumberForDay = 0;
+  for (let i: number = 0; i < currentWeek.length; i += 2) {
+    classNameNumberForDay++;
+
+    if (
+      `${currentWeek[i]} ${currentWeek[i + 1].substr(0, 2)}` ===
+      `${currentDay.toUpperCase()}`
+    ) {
+      return classNameNumberForDay;
     }
   }
-
   return -1;
 }
 export = {};
