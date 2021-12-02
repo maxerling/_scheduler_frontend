@@ -404,6 +404,7 @@ function moveWeek(weekAmount: number): void {
   const schedulerColumns = eventParent!.children;
   console.log;
   for (let i = 1; i < 8; i++) {
+    schedulerColumns[i].textContent = '';
     schedulerColumns[i].classList.remove('selected');
   }
   const weekdayParentEle = document.getElementById('weekdays-name');
