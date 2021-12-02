@@ -401,10 +401,10 @@ function checkCurrentWeek(): void {
 
 function moveWeek(weekAmount: number): void {
   const eventParent = document.getElementById('event-scheduler');
-
+  const schedulerColumns = eventParent!.children;
+  console.log;
   for (let i = 1; i < 8; i++) {
-    eventParent!.children[i].textContent = '';
-    eventParent!.children[i].classList.remove('selected');
+    schedulerColumns[i].classList.remove('selected');
   }
   const weekdayParentEle = document.getElementById('weekdays-name');
   const monthAndYearEle = document.getElementById('cal-month');
@@ -459,7 +459,7 @@ function moveWeek(weekAmount: number): void {
       dateOWFPlusOneArray[2]
     }/${isSingleDigitMonthPlusOne}`;
   }
-
+  todaysDateHighlight();
   createEventElements();
 
   //extra: change so the default date is based on current day (ex: day-1 is the closest mon)
