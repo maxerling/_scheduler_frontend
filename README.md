@@ -6,7 +6,7 @@ This is a scheduler made with Typescript, Spring Boot, Spring Security, JWT, Bul
 
 As a user you start with accessing the login page and use the [User Info](#user-info) to login to scheduler.
 
-
+https://maxerling.github.io/_scheduler_frontend/
 
 **!: First time you try to login, you will need to wait for the server to start!**
 
