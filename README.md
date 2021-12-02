@@ -31,18 +31,18 @@ password: user3
 
 ## Functionality
 
-![image-20211202213209555](.\assets\images\site)
+![image-20211202213209555](./assets/images/site)
 
 ### Calender <prev,next>
 
-![image-20211202213332619](.\assets\images\prev-next-buttons)
+![image-20211202213332619](assets\images\prev-next-buttons)
 
 These button will move  past or forward one week
 
 
 ### Log Out
 
-![image-20211202213423141](.\assets\images\logut-button)
+![image-20211202213423141](assets/images/logut-button)
 
 Log out button, you will be redirected to the login screen  and require to login again.
 
