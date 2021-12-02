@@ -83,7 +83,7 @@ function addEventSubmit() {
     };
     const jwtToken = JSON.parse(localStorage.getItem('jwt') as string);
     const response = await fetch(
-      'https://scheduler-21.herokuapp.com/event/add',
+      'https://scheduler-21.herokuapp.com/events/add',
       {
         method: 'POST',
         headers: {
