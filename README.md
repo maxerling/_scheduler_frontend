@@ -35,7 +35,7 @@ password: user3
 
 ### Calender <prev,next>
 
-![image-20211202213332619](assets\images\prev-next-buttons)
+![image-20211202213332619](assets/images/prev-next-buttons)
 
 These button will move  past or forward one week
 
@@ -48,7 +48,7 @@ Log out button, you will be redirected to the login screen  and require to login
 
 ### Add Event
 
-![image-20211202213454538](.\assets\images\time-table)
+![image-20211202213454538](./assets/images/time-table)
 
 When you click on this element a modal will open up. Were you can input the necessary information to create an event for your user.
 
@@ -62,7 +62,7 @@ When you click on this element a modal will open up. Were you can input the nece
 
 ### Event Info
 
-![image-20211202213559000](.\assets\images\event)
+![image-20211202213559000](./assets/images/event)
 
 Click and a modal will open up with event info.
 
