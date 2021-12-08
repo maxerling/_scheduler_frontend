@@ -69,7 +69,7 @@ Click and a modal will open up with event info.
 
 ## Reflection
 
-Was a fun project to work on. Something that I noticed with the frontend was that I was lacking a lot when it comes to the structure of code. Compared  to using React, it's hard to 'naturally' structure the code with just JS/TS. Something that I need to think about in future projects. Learned a lot when it comes to identifying the problem, break it down and rephrase it into something that is 'googleable'.  More cohesive error handling instead of just returning a status code.
+Was a fun project to work on. Something that I noticed with the frontend was that I was lacking a lot when it comes to the structure of code. Compared  to using React, it's hard to 'naturally' structure the code with just JS/TS. Something that I need to think about in future projects. Learned a lot when it comes to identifying the problem, break it down and rephrase it into something that is 'googleable'. Also more cohesive error handling instead of just returning a status code.
 
 Was using Parcel as my bundler and had some unique problems when it came to how my code was running locally compared to  my prod env.
 
@@ -120,6 +120,11 @@ Here is some things that either could be worked on or added during time.
 
 - [ ] add unit tests
 - [ ] add integration tests
+
+
+#### Security
+
+- [ ] storage of JWT, user info
 
 #### Other
 
