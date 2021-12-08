@@ -97,7 +97,7 @@ Here is some things that either could be worked on or added during time.
 
 - [ ] registration page
 
-- [ ] change so {month} isn't based on Monday instead current date
+- [ ] change so {month} header isn't based on first day of the week instead it's based on current date
 
   
 
